@@ -1,0 +1,88 @@
+---
+title: "Experiment 1"
+output: html_document
+date: "2024-11-3"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+library(here)
+library(tidyverse)
+library(bayestestR)
+library(brms)
+exp1_mod_nm = read_rds(here("data", "models", "ord_nonmember.rds"))
+exp1_mod_m = read_rds(here("data", "models", "ord_member.rds"))
+
+```
+
+
+For now, there are basic models using default priors - we will use this model for the sensitivity analysis, and incorporate the priors (which are actually pretty complicated to incorporate because of all of the math involved).
+
+This is the model if it is interpreted ordinally vs. linearly - really we get the same qualitative conclusion. (Member model: Lower mean ratings for the linear model for abstract and a higher probability of a rating of 1 in the ordinal interpretation).
+
+
+# Member Model
+
+```{r}
+conditional_effects(exp1_mod_m, categorical = TRUE)
+```
+
+```{r}
+conditional_effects(exp1_mod_m)
+```
+
+```{r}
+describe_posterior(exp1_mod_nm) %>% 
+    as_tibble() %>% 
+  select(-c("CI", "ROPE_CI", "ROPE_low", "ROPE_high")) %>% 
+  mutate(ESS = round(ESS)) %>% 
+  knitr::kable(format = "pandoc", digits = 2)
+```
+
+
+```{r}
+conditional_effects(exp1_mod_m, categorical = TRUE)[["CategoryType:cats__"]] %>% 
+  select(effect1__, effect2__, estimate__, lower__, upper__) %>% 
+  rename("CategoryType" = "effect1__") %>% 
+  rename("Rating" = "effect2__") %>% 
+  mutate(estimate__ = round(estimate__, digits = 2)) %>% 
+  mutate(lower__ = round(lower__, digits = 2)) %>% 
+  mutate(upper__ = round(upper__, digits = 2)) %>% 
+  mutate(model_effect = paste0(estimate__, " [", lower__, " - ", upper__, "]")) %>% 
+  select(CategoryType, Rating, model_effect) %>% 
+  pivot_wider(names_from = Rating, values_from = model_effect) %>%  knitr::kable(format = "pandoc", digits = 2)
+
+```
+
+# Non-member model
+```{r}
+conditional_effects(exp1_mod_nm, categorical = TRUE)
+```
+
+```{r}
+conditional_effects(exp1_mod_nm)
+```
+
+```{r}
+describe_posterior(exp1_mod_nm) %>% 
+    as_tibble() %>% 
+  select(-c("CI", "ROPE_CI", "ROPE_low", "ROPE_high")) %>% 
+  mutate(ESS = round(ESS)) %>% 
+  knitr::kable(format = "pandoc", digits = 2)
+```
+
+```{r}
+conditional_effects(exp1_mod_nm, categorical = TRUE)[["CategoryType:cats__"]] %>% 
+  select(effect1__, effect2__, estimate__, lower__, upper__) %>% 
+  rename("CategoryType" = "effect1__") %>% 
+  rename("Rating" = "effect2__") %>% 
+  mutate(estimate__ = round(estimate__, digits = 2)) %>% 
+  mutate(lower__ = round(lower__, digits = 2)) %>% 
+  mutate(upper__ = round(upper__, digits = 2)) %>% 
+  mutate(model_effect = paste0(estimate__, " [", lower__, " - ", upper__, "]")) %>% 
+  select(CategoryType, Rating, model_effect) %>% 
+  pivot_wider(names_from = Rating, values_from = model_effect) %>%  knitr::kable(format = "pandoc", digits = 2)
+
+```
+
+

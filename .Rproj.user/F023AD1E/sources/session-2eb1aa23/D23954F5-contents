@@ -1,0 +1,245 @@
+### The following script makes the loaded data into plot, tables and runs the models
+### reported in the manuscript
+
+
+source(here("scripts", "02_load_data.R"))
+
+### Plots 
+bil_sub %>% 
+  mutate(case = case_when(
+    phoneme == "i" & language == "English" ~ "/i/",
+    phoneme == "i" & language == "Spanish" ~ "/i/",
+    phoneme == "i" & language == "French" ~ "/i/",
+    phoneme == "i" & language == "German" ~ "/i/",
+    phoneme == "u" & language == "English" ~ "/y/ or /u/",
+    phoneme == "u" & language == "Spanish" ~ "/y/ or /u/",
+    phoneme == "u" & language == "French" ~ "/y/ or /u/",
+    phoneme == "u" & language == "German" ~ "/y/ or /u/",
+  )) %>% 
+  filter(!is.na(case)) %>% 
+  ggplot(aes(x = f2e, y = f1e, color = correct)) + 
+  geom_point(alpha = .25) + scale_x_reverse() +
+  xlab("F2") + ylab("F1") +
+  theme_minimal() + 
+  scale_y_reverse() + stat_ellipse(linetype = "dashed") + 
+  facet_grid(language~case) +
+  ggtitle("Force-aligned and hand-corrected vowels") 
+
+ggsave("hand_correct_n.png", path = 
+         here::here("includes", "figures"))
+
+
+text_df_b = bil_sub %>% 
+  filter(correct == "corrected") %>% 
+  group_by(phoneme, language) %>% 
+  summarize(n = n()) %>% filter(phoneme == "i" | phoneme == "u") %>% 
+  mutate(phoneme = case_when(
+    phoneme == "i" & language == "English" ~ "/i/",
+    phoneme == "i" & language == "Spanish" ~ "/i/",
+    phoneme == "i" & language == "French" ~ "/i/",
+    phoneme == "i" & language == "German" ~ "/i/",
+    phoneme == "u" & language == "English" ~ "/y/ or /u/",
+    phoneme == "u" & language == "Spanish" ~ "/y/ or /u/",
+    phoneme == "u" & language == "French" ~ "/y/ or /u/",
+    phoneme == "u" & language == "German" ~ "/y/ or /u/",
+  )) 
+
+bil_sub %>% 
+  filter(correct == "corrected") %>% 
+  group_by(phoneme, language) %>% 
+  summarize(n = n()) %>% 
+  filter(phoneme == "i" | phoneme == "u") %>% 
+  mutate(phoneme = case_when(
+    phoneme == "i" & language == "English" ~ "/i/",
+    phoneme == "i" & language == "Spanish" ~ "/i/",
+    phoneme == "i" & language == "French" ~ "/i/",
+    phoneme == "i" & language == "German" ~ "/i/",
+    phoneme == "u" & language == "English" ~ "/y/ or /u/",
+    phoneme == "u" & language == "Spanish" ~ "/y/ or /u/",
+    phoneme == "u" & language == "French" ~ "/y/ or /u/",
+    phoneme == "u" & language == "German" ~ "/y/ or /u/",
+  )) %>% 
+  ggplot(aes(x = n, y = language, fill = phoneme)) + 
+  geom_col(position = position_dodge(width = -.75), color = "black") +
+  theme(strip.text.x = element_text(size = 10),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position="bottom", 
+        legend.text=element_text(size=10),
+        legend.title=element_text(size=10),
+        axis.text=element_text(size=10),
+        axis.title=element_text(size=10,face="bold"),
+        plot.title = element_text(size=12,face="bold")) + 
+  geom_text(data = text_df_b, aes(label = paste0("n = ", n), x = Inf,
+                                  hjust = "inward"), size = 2.5, position = position_dodge(width = -.75)) + xlim(0,40) + theme_minimal() 
+
+
+f1f2_df %>% 
+  filter(Phoneme == "u" | Phoneme == "i") %>% 
+  filter(Language == "French" | Language == "English" | 
+           Language == "Spanish" | Language == "German")
+
+
+text_df = full_data %>% 
+  mutate(phoneme = case_when(
+    phoneme == "i" & language == "English" ~ "/i/",
+    phoneme == "i" & language == "Spanish" ~ "/i/",
+    phoneme == "i" & language == "French" ~ "/i/",
+    phoneme == "i" & language == "German" ~ "/i/",
+    phoneme == "u" & language == "English" ~ "/y/ or /u/",
+    phoneme == "u" & language == "Spanish" ~ "/y/ or /u/",
+    phoneme == "u" & language == "French" ~ "/y/ or /u/",
+    phoneme == "u" & language == "German" ~ "/y/ or /u/",
+  )) %>% 
+  filter(!is.na(phoneme)) %>% 
+  group_by(phoneme, language) %>% 
+  summarize(n = n())
+
+full_data %>% 
+  mutate(phoneme = case_when(
+    phoneme == "i" & language == "English" ~ "/i/",
+    phoneme == "i" & language == "Spanish" ~ "/i/",
+    phoneme == "i" & language == "French" ~ "/i/",
+    phoneme == "i" & language == "German" ~ "/i/",
+    phoneme == "u" & language == "English" ~ "/y/ or /u/",
+    phoneme == "u" & language == "Spanish" ~ "/y/ or /u/",
+    phoneme == "u" & language == "French" ~ "/y/ or /u/",
+    phoneme == "u" & language == "German" ~ "/y/ or /u/",
+  )) %>% 
+  filter(!is.na(phoneme)) %>% 
+  group_by(phoneme, language) %>% 
+  summarize(n = n()) %>% 
+  ggplot(aes(x = n, y = language, fill = phoneme)) +
+  xlim(0,1200) +
+  theme_minimal() +
+  xlab("Number of tokens") +
+  ylab("Language") +
+  theme(strip.text.x = element_text(size = 8),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size = 8),
+        axis.text.y = element_text(size = 8),
+        legend.position="bottom", 
+        legend.text=element_text(size=8),
+        legend.title=element_text(size=8),
+        axis.text=element_text(size=8),
+        axis.title=element_text(size=8,face="bold"),
+        plot.title = element_text(size=12,face="bold")) +
+  geom_col(position = position_dodge(width = -.75), color = "black") + 
+  geom_text(data = text_df, aes(label = paste0("n = ", n), x = Inf,
+                                hjust = "inward"), size = 2.5, position = position_dodge(width = -.75))
+
+plot_df = full_data %>% 
+  mutate(phoneme_plot = case_when(
+    language == "French" & phoneme == "u" ~ "/y/",
+    language == "German" & phoneme == "u" ~ "/y/",
+    language == "English" & phoneme == "u" ~ "/u/",
+    language == "Spanish" & phoneme == "u" ~ "/u/",
+    language == "French" & phoneme == "o" ~ "/o/",
+    language == "German" & phoneme == "o" ~ "/o/",
+    language == "English" & phoneme == "o" ~ "/o/",
+    language == "Spanish" & phoneme == "o" ~ "/o/",
+    language == "French" & phoneme == "schwa" ~ "/ʌ/",
+    language == "German" & phoneme == "schwa" ~ "/ʌ/",
+    language == "English" & phoneme == "schwa" ~ "/ʌ/",
+    language == "Spanish" & phoneme == "schwa" ~ "/ʌ/",
+    language == "French" & phoneme == "i" ~ "/i/",
+    language == "German" & phoneme == "i" ~ "/i/",
+    language == "English" & phoneme == "i" ~ "/i/",
+    language == "Spanish" & phoneme == "i" ~ "/i/"
+  )) 
+
+
+mdf = plot_df %>% 
+  mutate(fe_st = paste0(language,"_",phoneme,"_",group))
+
+mod_df = plot_df %>% 
+  filter(phoneme == "i" | phoneme == "u")
+
+mod_df %>% 
+  group_by(language, phoneme, group) %>% 
+  summarize(n = n())
+
+f2mod = brm(f2e ~ language*phoneme + 
+              (1 | text) + (1 | participant), data = mod_df %>% filter(group == "L1 Spanish bilingual"))
+
+
+text_df = full_data %>% 
+  mutate(phoneme = case_when(
+    phoneme == "i" & language == "English" ~ "/i/",
+    phoneme == "i" & language == "Spanish" ~ "/i/",
+    phoneme == "i" & language == "French" ~ "/i/",
+    phoneme == "i" & language == "German" ~ "/i/",
+    phoneme == "u" & language == "English" ~ "/u/",
+    phoneme == "u" & language == "Spanish" ~ "/u/",
+    phoneme == "u" & language == "French" ~ "/y/",
+    phoneme == "u" & language == "German" ~ "/y/",
+  )) %>% 
+  filter(!is.na(phoneme))
+
+
+## Revlevel and run model 
+text_df$phoneme = as.factor(text_df$phoneme)
+text_df$phoneme = relevel(text_df$phoneme, ref = "/y/")
+
+grp_int_mod = brm(f2e ~ phoneme*group + 
+              (1 | text) + (1 | participant), iter = 4000, data = text_df)
+
+readRDS(here("models", "high_v_mod.rds"))
+
+grp_int_mod %>% 
+  write_rds(here("models", "high_v_mod.rds"))
+
+mod = readRDS(here("models", "high_v_mod.rds"))
+
+## Table 2
+report_table = bayestestR::describe_posterior(mod) %>% 
+  mutate(Median = paste0(round(Median), " [", 
+                         round(CI_low), " - ",
+                         round(CI_high), "]")) %>% 
+  select(Parameter, Median, pd, Rhat, ESS) %>% 
+  mutate(Parameter = case_when(
+    Parameter == "b_Intercept" ~ "Intercept",
+    Parameter == "b_phonemeDiD" ~ "Phoneme /i/",
+    Parameter == "b_phonemeDuD" ~ "Phomeme /u/",
+    Parameter == "b_groupL1Englishmonolingual" ~ "Group English monolingual",
+    Parameter == "b_groupL1Spanishbilingual" ~ "Group Spanish bilingual",
+    Parameter == "b_groupL1Spanishmonolingual" ~ "Group Spanish monolingual",
+    Parameter == "b_phonemeDiD:groupL1Englishmonolingual" ~ "/i/ * English monolingual",
+    Parameter == "b_phonemeDuD:groupL1Englishmonolingual" ~ "/u/ * English monolingual",
+    Parameter == "b_phonemeDiD:groupL1Spanishbilingual" ~ "/i/ * Spanish bilingual",
+    Parameter == "b_phonemeDuD:groupL1Spanishbilingual" ~ "/u/ * Spanish bilingual",
+    Parameter == "b_phonemeDiD:groupL1Spanishmonolingual" ~ "/i/ * Spanish monolingual",
+    Parameter == "b_phonemeDuD:groupL1Spanishmonolingual" ~ "/u/ * Spanish monolingual"
+  )) %>% 
+  mutate(pd = round(pd, digits = 2)) %>%
+  mutate(ESS = round(ESS, digits = 2)) %>% 
+  mutate(Rhat = round(Rhat, digits = 2)) 
+
+report_table %>% 
+  write.csv(here("data", "report_data.csv"))
+
+
+
+text_df %>% 
+  data_grid(phoneme, group) %>%
+  add_fitted_draws(mod, dpar = TRUE, category = "answers",
+                   re_formula = NA) %>% 
+  ggplot(aes(x = .value, fill = phoneme)) +
+  stat_halfeye(alpha = .5) +
+  scale_size_continuous(guide = "none") +
+  theme_minimal() +
+  xlab("F2 Value") + ylab("") + 
+  theme(legend.position = "bottom") + facet_wrap(~group) +
+  ggsave(here("docs", "plots", "model_plot.png"))
+
+
+ce_table = conditional_effects(mod)[["phoneme:group"]] %>% 
+  as.data.frame() %>% 
+  mutate(F2 = paste0(round(estimate__), " [",round(lower__),"-",round(upper__), "]")) %>% 
+  select(group, phoneme, F2)
+
+ce_table %>% 
+  write.csv(here("data", "ce_report.csv"))
+
+
+### Proof read x2 
+### SEND IT

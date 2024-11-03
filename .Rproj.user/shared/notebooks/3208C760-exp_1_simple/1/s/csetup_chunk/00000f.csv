@@ -1,0 +1,8 @@
+"0","knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)"
+"0","library(here)"
+"0","library(tidyverse)"
+"0","library(bayestestR)"
+"0","library(brms)"
+"0","exp1_mod_nm = read_rds(here(""data"", ""models"", ""ord_nonmember.rds""))"
+"0","exp1_mod_m = read_rds(here(""data"", ""models"", ""ord_member.rds""))"
+"0",""

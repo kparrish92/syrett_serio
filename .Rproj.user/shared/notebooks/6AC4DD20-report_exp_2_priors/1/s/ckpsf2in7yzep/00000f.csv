@@ -1,0 +1,4 @@
+"0","# Join the member and nonmember data and calculate the proprotion of predicted responses relative to the total number of trials - our priors in probability."
+"0","data_for_priors = left_join(nonmember_tidy_mutated_grouped, member_tidy_mutated_grouped) %>% "
+"0","  mutate(predicted_grp_prob = (n_a + n_b)/sum(m_total, nm_total))"
+"0",""

@@ -1,0 +1,126 @@
+"0","library(""tidyverse"")"
+"0","library(""ggplot2"")"
+"0","library(""lme4"")"
+"2","Loading required package: Matrix
+"
+"2","
+Attaching package: ‘Matrix’
+
+"
+"2","The following objects are masked from ‘package:tidyr’:
+
+    expand, pack, unpack
+
+"
+"2","
+Attaching package: ‘lme4’
+
+"
+"2","The following object is masked from ‘package:brms’:
+
+    ngrps
+
+"
+"0","library(""emmeans"")"
+"0","library(""car"")"
+"2","Loading required package: carData
+"
+"2","
+Attaching package: ‘car’
+
+"
+"2","The following object is masked from ‘package:dplyr’:
+
+    recode
+
+"
+"2","The following object is masked from ‘package:purrr’:
+
+    some
+
+"
+"0","library(""dplyr"")"
+"0","install.packages(""ordinal"")"
+"2","trying URL 'https://cran.rstudio.com/bin/macosx/big-sur-arm64/contrib/4.3/ordinal_2023.12-4.1.tgz'
+"
+"2","Content type 'application/x-gzip'"
+"2"," length 1279681 bytes (1.2 MB)
+"
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","="
+"2","
+"
+"2","downloaded 1.2 MB
+
+"
+"1","
+"
+"1",""
+"1","The downloaded binary packages are in
+	/var/folders/0g/n6gbxyf10kgc66tv5r3l3qp80000gn/T//RtmpQ9Ny3m/downloaded_packages"
+"1",""
+"1","
+"
+"0","library(ordinal)"
+"2","Warning: package ‘ordinal’ was built under R version 4.3.3"
+"2","
+Attaching package: ‘ordinal’
+
+"
+"2","The following object is masked from ‘package:dplyr’:
+
+    slice
+
+"
+"0","nonmember<-read.csv(""/Users/nathanielserio/Desktop/Baseline_member/baseline_nonmember.csv"")"
+"2","Warning: cannot open file '/Users/nathanielserio/Desktop/Baseline_member/baseline_nonmember.csv': No such file or directory"
+"2","Error in file(file, ""rt"") : cannot open the connection
+"

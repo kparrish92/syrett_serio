@@ -1,0 +1,2 @@
+"0","# Here is what the model would look like based on our priors as simulated data "
+"0","conditional_effects(simulated_model, categorical = TRUE)"

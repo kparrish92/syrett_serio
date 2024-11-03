@@ -1,0 +1,6 @@
+"0","# Here is what the model would look like based on our priors as simulated data 
+conditional_effects(simulated_model, categorical = TRUE)
+```
+"
+"2","Error: attempt to use zero-length variable name
+"

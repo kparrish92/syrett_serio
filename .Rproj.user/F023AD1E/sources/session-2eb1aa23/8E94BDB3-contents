@@ -1,0 +1,74 @@
+---
+title: "Multinomial Model for experiment 2"
+format: html
+editor: visual
+---
+
+```{r}
+source(here::here("scripts", "00_libs.R"))
+source(here("scripts", "05a_load_exp_2.R"))
+
+```
+
+```{r}
+exp2data %>% 
+  ggplot(aes(response_corrected, fill = response_corrected)) +
+  geom_histogram(stat = "count", color = "black") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  facet_wrap(~kind) +
+  guides(fill=guide_legend("Response")) 
+
+```
+
+This report was made based on the recommended Bayesian Analysis Reporting Guidelines (Kruschke, 2021).
+
+## Preamble - Goals of the analysis and why Bayesian.
+
+There were two goals of the present analysis. First, it was of interest what the probabilities of three answer choices were ("is", "is not" and "both"), given the predictor "kind". Secondly, we wanted to compare the answers within the predictor "kind" to one another. To do so, two Bayesian mixed effects models were carried out. For the probability of each answer choice, a multinomial models was run, since there were three possible answer choices. This model tells us what the probabiltiy was, at the group level, of the three answer choices in each of the levels of the condition "kind". Next, a poisson regression was run, in which a count was predicted as a function of answer choice, kind, and their interaction. This model makes the counts fully comparable, both within "kind" condition, and between their sub-parts.
+
+A Bayesian analysis was chosen for two primary reasons. Firstly, the implementation of multinomial models with random effects structures is relatvaiely straightforward for Bayesian models in R, while frequentist R packages often only allow for fixed effects models. Secondly, with a Bayesian approach, it was possible to provide evidence for the null hypothesis and the alternative hypothesis within a given model by establishing a region of practical equivalence, when doing so would be less straightforward within a frequentist framework and would require additional tests.
+
+## Step 1 - Explain the model
+
+The multinomial model predicted log-odds of three possible answer choices "Is", "Is not" or "Both". The model contained just one categorical fixed effect predictor called "kind" (six levels: natural kind, abstract concept, artifact, control check, control precise definition and control subjective adjective). The model also included a random intercept for participant, and a random slope for the effect of kind by participant.
+
+The poisson model predicted the count (number of) responses as a function categorical two fixed effects: answer choice (three levels: "Is", "Is not" and "Both"), and kind (six levels: natural kind, abstract concept, artifact, control check, control precise definition and control subjective adjective) and their interaction. This model also included a random intercept for participant, and a random slope for the interaction answer choice and kind by participant.
+
+## Step 2 - Report the details of the computation
+
+```{r}
+
+
+```
+
+## Step 3 - Describe the Posterior Distribution
+
+```{r}
+summary(mmod_exp2)[["fixed"]] %>% 
+  knitr::kable(digits = 2)
+
+```
+
+```{r}
+exp2data %>%
+  data_grid(kind) %>%
+  add_fitted_draws(mmod_exp2, dpar = TRUE, category = "response_corrected",
+                   re_formula = NA) %>%
+  filter(kind == "natural kind" | kind == "abstract concept" |
+           kind == "artifact") %>% 
+  ggplot(aes(y = kind, x = .value, fill = response_corrected)) +
+  stat_halfeye(alpha = .5) +
+  scale_size_continuous(guide = "none") +
+  theme_minimal() +
+  xlab("Probability") + ylab("Condition") + 
+  theme(legend.position = "bottom") +
+  guides(fill=guide_legend("Response")) 
+
+```
+
+## Step 4 - Report Decisions and their criteria
+
+## Step 5 - Report Sensitivity Analysis
+
+## Step 6 - Make it Reporducible

@@ -1,0 +1,5 @@
+"0","data_for_priors %>% "
+"0","  filter(CategoryType == ""Abstract"" | CategoryType == ""Artifact"" | CategoryType == ""Natural"") %>% "
+"0","  select(CategoryType, predicted_answer, predicted_grp_prob) %>% "
+"0","  pivot_wider(names_from = predicted_answer, values_from = predicted_grp_prob) %>% "
+"0","  knitr::kable(format = ""pandoc"", digits = 2)"

@@ -1,0 +1,39 @@
+---
+title: "Experiment 2"
+output: html_document
+date: "2024-10-31"
+---
+
+
+# Our priors expressed as probabilities 
+```{r}
+
+data_for_priors = read.csv(here("data", "tidy", "prior_data.csv"))
+
+data_for_priors %>% 
+  filter(CategoryType == "Abstract" | CategoryType == "Artifact" | CategoryType == "Natural") %>% 
+  select(CategoryType, predicted_answer, predicted_grp_prob) %>% 
+  pivot_wider(names_from = predicted_answer, values_from = predicted_grp_prob) %>% 
+  knitr::kable(format = "pandoc", digits = 2)
+```
+
+```{r}
+conditional_effects(b2, categorical = TRUE)
+```
+
+```{r}
+describe_posterior(b2) %>% 
+  as_tibble() %>% 
+  select(-c("CI", "ROPE_CI", "ROPE_low", "ROPE_high")) %>% 
+  mutate(Parameter = case_when(
+    Parameter == "b_muIs_Intercept" ~ "Intercept 'is'", 
+    Parameter == "b_muIsnot_Intercept" ~ "Intercept 'is not'", 
+    Parameter == "b_muIs_CategoryTypeArtifact" ~ "Is_CategoryTypeArtifact", 
+    Parameter == "b_muIs_CategoryTypeNatural" ~ "Is_CategoryTypeNatural", 
+    Parameter == "b_muIsnot_CategoryTypeArtifact" ~ "Isnot_CategoryTypeArtifact",
+    Parameter == "b_muIsnot_CategoryTypeNatural" ~ "Isnot_CategoryTypeNatural"
+  )) %>% 
+  mutate(ESS = round(ESS)) %>% 
+  knitr::kable(format = "pandoc", digits = 2)
+
+```

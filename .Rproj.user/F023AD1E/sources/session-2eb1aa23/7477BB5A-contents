@@ -1,0 +1,142 @@
+---
+title: "Experiments 1a, 1b"
+output:
+  pdf_document: default
+  html_document: default
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+```{r}
+library("tidyverse")
+library("ggplot2")
+library("lme4")
+library("emmeans")
+library("car")
+library("dplyr")
+install.packages("ordinal")
+library(ordinal)
+
+
+nonmember<-read.csv("/Users/nathanielserio/Desktop/Baseline_member/baseline_nonmember.csv")
+
+```
+
+### Trying Josh's suggestions
+# First add participant column
+
+```{r}
+options(scipen = 999)
+
+PivotData <- pivot_longer(nonmember, Water:Shovel, names_to="Item", values_to="Rating")
+FinalData <- PivotData %>% mutate(CategoryType = case_when(
+  Item == "Water" ~ "Natural",
+  Item == "Tiger" ~ "Natural",
+  Item == "Gold" ~ "Natural",
+  Item == "Raccoon" ~ "Natural",
+  Item == "Helium" ~ "Natural",
+  Item == "Zebra" ~ "Natural",
+  Item == "Fork" ~ "Artifact",
+  Item == "Kettle" ~ "Artifact",
+  Item == "Chair" ~ "Artifact",
+  Item == "Razor" ~ "Artifact",
+  Item == "Harpoon" ~ "Artifact",
+  Item == "Shovel" ~ "Artifact",
+  Item == "Heavy.Metal" ~ "Abstract",
+  Item == "Scientist" ~ "Abstract",
+  Item == "Mentor" ~ "Abstract",
+  Item == "Argument" ~ "Abstract",
+  Item == "Artist" ~ "Abstract",
+  Item == "Minister" ~ "Abstract",
+  Item == "Spicy" ~ "Vague",
+  Item == "Tall" ~ "Vague",
+  Item == "Square" ~ "Definite",
+  Item == "Gallon" ~ "Definite"))
+
+
+FinalData$Item <- as.factor(FinalData$Item)
+FinalData$CategoryType <- as.factor(FinalData$CategoryType)
+
+```
+
+### Overall ANOVA
+
+```{r}
+modelA <- lmer(Rating ~ CategoryType + (1|Participant) + (1|Item), FinalData)
+summary(modelA)
+```
+
+```{r}
+Anova(modelA, type=2)
+```
+
+### Means by Condition
+
+```{r}
+em.lmerA <- emmeans(modelA, "CategoryType")
+
+em.lmerA
+
+pairs(em.lmerA)
+
+```
+
+### Member
+
+```{r}
+member<-read.csv("/Users/nathanielserio/Desktop/Baseline_member/baseline_member_r.csv")
+
+Data <- pivot_longer(member, Water:Shovel, names_to="Item", values_to="Rating")
+MutatedData <- Data %>% mutate(CategoryType = case_when(
+  Item == "Water" ~ "Natural",
+  Item == "Tiger" ~ "Natural",
+  Item == "Gold" ~ "Natural",
+  Item == "Raccoon" ~ "Natural",
+  Item == "Helium" ~ "Natural",
+  Item == "Zebra" ~ "Natural",
+  Item == "Fork" ~ "Artifact",
+  Item == "Kettle" ~ "Artifact",
+  Item == "Chair" ~ "Artifact",
+  Item == "Razor" ~ "Artifact",
+  Item == "Harpoon" ~ "Artifact",
+  Item == "Shovel" ~ "Artifact",
+  Item == "Heavy.Metal" ~ "Abstract",
+  Item == "Scientist" ~ "Abstract",
+  Item == "Mentor" ~ "Abstract",
+  Item == "Argument" ~ "Abstract",
+  Item == "Artist" ~ "Abstract",
+  Item == "Minister" ~ "Abstract",
+  Item == "Spicy" ~ "Vague",
+  Item == "Tall" ~ "Vague",
+  Item == "Square" ~ "Definite",
+  Item == "Gallon" ~ "Definite"))
+
+MutatedData$Item <- as.factor(MutatedData$Item)
+MutatedData$CategoryType <- as.factor(MutatedData$CategoryType)
+
+```
+
+### Overall ANOVA
+
+```{r}
+modelB <- lmer(Rating ~ CategoryType + (1|Participant) + (1|Item), MutatedData)
+summary(modelB)
+Anova(modelB, type=2)
+
+```
+
+### Means by Condition
+
+```{r}
+em.lmerB <- emmeans(modelB, "CategoryType")
+
+em.lmerB
+
+pairs(em.lmerB)
+
+```
+

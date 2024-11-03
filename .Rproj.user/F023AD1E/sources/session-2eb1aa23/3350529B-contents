@@ -1,0 +1,74 @@
+---
+output: 
+  pdf_document:
+    latex_engine: xelatex
+    keep_tex: true
+geometry: margin=1in
+fontsize: 12pt
+header-includes:
+  - \usepackage{multirow}
+  - \usepackage{graphicx}
+  - \usepackage{times}
+  - \usepackage[onehalfspacing]{setspace}
+  - \usepackage{xcolor}
+  - \usepackage{marvosym}
+  - \usepackage[ddmmyyyy]{datetime}
+  - \usepackage{textpos}
+  - \usepackage{fontspec}
+  - \setmainfont{Times New Roman}
+  - \usepackage{fancyhdr}
+  - \pagestyle{fancy}
+  - \fancyhf{}
+  - \usepackage{tabularx} 
+  - \rfoot{Parrish \thepage}
+  - \usepackage{setspace} % for adjusting line spacing
+---
+
+\begin{spacing}{0.5} % adjust line spacing locally (0.9 means 10% reduction in line spacing)
+\begin{tabularx}{\textwidth}{@{}lXr@{}}
+  \multirow{5}{*}{\includegraphics[width=.16\linewidth]{gu_logo.png}} & \textbf{\small Kyle Parrish} & \\
+  & \small Postdoctoral Researcher & \small \Mobilefone~+1 (704) 803-0040 \\
+  & \small Institute for Romance Languages and Literatures &  \small \Email~kparrish.linguistics@gmail.com \\
+  & \small Goethe University Frankfurt & \\
+  & \small Frankfurt, Germany & \\
+\end{tabularx}
+\end{spacing}
+
+
+\vspace{1em}
+
+November 2nd, 2024 
+
+\begin{spacing}{0.5} % adjust line spacing locally (0.9 means 10% reduction in line spacing)
+Institute for Language Sciences (ILS) \\   
+Utrecht University \\  
+Utrecht, Netherlands \\   
+
+\end{spacing}
+
+\vspace{1em}
+
+Dear Dr. Dotlacil,
+
+I am writing to apply for the position of X in Y at Z.
+I hold a Ph.D. in Bilingualism and Second Language Acquisition from Rutgers University from the Department of Spanish and Portuguese. 
+Currently, I am currently a Postdoctoral Researcher at Goethe University Frankfurt, where I teach courses in linguistics and conduct independent research in multilingualism.
+My research focus is on phonetics and phonology, with additional experience in programming and simulation, statistical analysis and data visualization, and the acquisition of late-learned languages. 
+
+My research program includes both empirical work and utilizes simulation to set a foundation for future and ongoing work in multilingual speech and third language acquisition. 
+To date, I have published five total independent and collaborative research papers in top-tier journals, including those with a high impact factor, with three additional papers in submission.
+My research has adopted a novel approach by considering the impact of both group-level and within-subject statistical power on the characterization of particular speech sounds.
+Findings indicate that traditional group analyses which favor higher numbers of participants and fewer observations per experimental condition can actually introduce bias when there are latent variables within the experimental groups.
+
+These results have laid the groundwork for my ongoing and future projects in empirical investigations of multilingual sound representation. 
+I plan to seek funding from the Linguistics Program at the National Science Foundation to develop a project studying the trajectory of within-subject variability throughout speech development in late-learned languages. 
+The results of this project would have important implications for empirical designs, and would improve the certainty of measurements from the individual.
+Beyond this project, a longer term goal is to develop an open-source tool that predicts speech variability and dynamically adapts the experimental stimulus the most time and cost effective manner to obtain a reliable individual estimate.
+I would seek funding for this project from a collaborative grant at the National Science Foundation in the Research Infrastructure in the Social and Behavioral Sciences Program (RISBS).
+
+
+Thank you for considering my application. I look forward to hearing from you soon.
+
+\vspace{1em}
+Sincerely,  
+Kyle Parrish
