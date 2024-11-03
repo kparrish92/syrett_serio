@@ -3,24 +3,24 @@
     "path": "~/Documents/GitHub/syrett_serio/report/exp3/exp3.R",
     "project_path": "report/exp3/exp3.R",
     "type": "r_source",
-    "hash": "0",
+    "hash": "3944827958",
     "contents": "",
-    "dirty": true,
+    "dirty": false,
     "created": 1730650784376.0,
     "source_on_save": false,
-    "relative_order": 4,
+    "relative_order": 1,
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "11,65",
-        "scrollLine": "0"
+        "cursorPosition": "19,0",
+        "scrollLine": "3"
     },
     "folds": "",
-    "lastKnownWriteTime": 1730651274,
+    "lastKnownWriteTime": 1730653378,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1730651322947,
+    "last_content_update": 1730653378286,
     "read_only": false,
     "read_only_alternatives": []
 }

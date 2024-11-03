@@ -19,7 +19,7 @@ four_choice_mod = read_rds(here("data", "models", "exp3_model.rds"))
 
 Model structure: `brm(Selection ~ CategoryType + (CategoryType | Participant)` 
 
-`Selection` had four levels: "Akira right","X right", "both", and "neither". The model predicted the log-odds of each choice as a function of `CategoryType`.
+`Selection` had four levels: "Elaine right","Akira right", "Both", and "Neither". The model predicted the log-odds of each choice as a function of `CategoryType`.
 
 `CategoryType` had three levels: "Natural", "Abstract" (Value) and "Artifact".
 
