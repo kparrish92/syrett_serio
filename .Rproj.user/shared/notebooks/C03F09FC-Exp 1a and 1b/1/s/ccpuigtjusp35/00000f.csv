@@ -1,5 +1,0 @@
-"0","options(scipen = 999)"
-"0",""
-"0","PivotData <- pivot_longer(nonmember, Water:Shovel, names_to=""Item"", values_to=""Rating"")"
-"2","Error: object 'nonmember' not found
-"

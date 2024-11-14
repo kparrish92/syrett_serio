@@ -110,9 +110,16 @@ create_pairwise_plot("Is", "Value",
 
 We have a lot of possible comparisons: 81 in principle, but it's more like 36 that we really care about. Here is a very busy visualization of what I mean:
 
+**Old plot**
 ```{r}
 knitr::include_graphics(here("report", "exp2", "figs", "big_pairwise_plot.png"))
 ```
+
+**Collapsed plots**
+```{r}
+knitr::include_graphics(here("report", "exp2", "figs", "ba_coll.png"))
+```
+
 
 We can decide together which specific differences are important to visualize. Here is a full table of the comparisons. Note that we can change the ROPE as it seems appropriate. 
 

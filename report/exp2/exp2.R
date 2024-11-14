@@ -80,8 +80,8 @@ data_for_priors %>%
 
 data_for_priors %>% 
   filter(CategoryType == "Abstract" | CategoryType == "Artifact" | CategoryType == "Natural") %>% 
-  select(CategoryType, predicted_answer, predicted_grp_prob) %>% 
-  pivot_wider(names_from = predicted_answer, values_from = predicted_grp_prob)
+  select(CategoryType, predicted_answer, predicted_grp) %>% 
+  pivot_wider(names_from = predicted_answer, values_from = predicted_grp)
 
 data_for_priors %>% 
   write.csv(here("data", "tidy", "prior_data.csv"))
@@ -111,17 +111,12 @@ senses_tidy$CategoryType = relevel(senses_tidy$CategoryType, ref = "Value")
 b2 <- brm(Selection ~ CategoryType + (CategoryType | Participant), 
           prior = prior_check,
           data=senses_tidy,
-          family="categorical")
-
-
-senses_tidy %>% 
-  group_by(Participant) %>% 
-  summarise(n = n())
+          family="categorical",
+          file = here("data", "models", "exp2_model.rds"))
 
 
 
-b2 %>% 
-  write_rds(here("data", "models", "exp2_model.rds"))
+
 
 
 ### Pairwise comparisons 
@@ -155,6 +150,8 @@ for (i in 1:9) {
 
 combos = do.call(rbind, comp_list)
 
+exp2_mod = b2
+
 rope_for_data = .2
 
 list_pdf = list()
@@ -185,6 +182,24 @@ all_data %>%
   facet_grid(~combo1~combo2)
 
 ggsave("big_pairwise_plot.png", path = here("report", "exp2", "figs"))
+
+
+## Collapsed plots 
+all_data %>% 
+  filter(combo1 == "Both_Artifact") %>% 
+  ggplot(aes(y = combo2, x = effect, color = combo2)) +
+  stat_pointinterval(alpha = .5, position = position_dodge(width = .5)) + geom_vline(xintercept = rope*-1, linetype = "dashed") +
+  geom_vline(xintercept = rope, linetype = "dashed") + theme_minimal() + 
+  ylab("") + theme(axis.ticks=element_blank(),
+                   axis.title.y=element_blank(), legend.position ="none") +
+  ggtitle("Effects relative to answers of both in the artifact condition") +
+  scale_color_manual(values=c("#56B4E9", "#56B4E9", "#56B4E9",
+                              "#E69F00", "#E69F00", "#E69F00",
+                              "#999999", "#999999", "#999999"))
+
+
+ggsave("ba_coll.png", path = here("report", "exp2", "figs"))
+
 
 
 posterior_pred = conditional_effects(exp2_mod, categorical = TRUE)[["CategoryType:cats__"]] %>% 
