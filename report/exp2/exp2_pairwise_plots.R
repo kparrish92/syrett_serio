@@ -100,8 +100,8 @@ unique(lists$comps)
 
 all_data %>% 
   mutate(comps = paste0(combo1,"_", combo2)) %>% 
-  filter(comps == "Is not_Artifact_Is_Natural" | comps == "Is not_Artifact_Is not_Value" |
-           comps == "Is not_Natural_Is_Value") %>% 
+  filter(comps == "Is not_Artifact_Is not_Natural" | comps == "Is not_Artifact_Is not_Value" |
+           comps == "Is not_Natural_Is not_Value") %>% 
   ggplot(aes(y = comps, x = effect)) +
   stat_halfeye(fill = "blue", alpha = .5) + geom_vline(xintercept = rope*-1, linetype = "dashed") +
   geom_vline(xintercept = rope, linetype = "dashed") + theme_minimal() + 
@@ -109,9 +109,9 @@ all_data %>%
                    axis.title.y=element_blank(), legend.position = "none") +
   xlab("Difference in Log-odds") +
   xlim(-6,6) +
-  scale_y_discrete(labels=c("Is not_Artifact_Is_Natural"="Artifact - Natural Kind",
-                            "Is not_Artifact_Is_Value"="Artifact - Value", 
-                            "Is not_Natural_Is_Value"="Natural Kind - Value"))
+  scale_y_discrete(labels=c("Is not_Artifact_Is not_Natural"="Artifact - Natural Kind",
+                            "Is not_Artifact_Is not_Value"="Artifact - Value", 
+                            "Is not_Natural_Is not_Value"="Natural Kind - Value"))
 
 
 ggsave("isnot_cond_plots.png", path = here("report", "exp2", "figs"))
