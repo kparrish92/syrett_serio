@@ -63,7 +63,7 @@ data_for_priors = left_join(nonmember_tidy_mutated_grouped, member_tidy_mutated_
 
 
 data_for_priors %>%
-  filter(CategoryType == "Abstract" | CategoryType == "Artifact" | CategoryType == "Natural") %>% 
+  filter(CategoryType == "Value" | CategoryType == "Artifact" | CategoryType == "Natural") %>% 
   mutate(log_odds = qlogis(predicted_grp)) %>% 
   mutate(upper = log_odds + .5) %>% 
   mutate(lower = log_odds - .5) %>% 
@@ -79,7 +79,7 @@ data_for_priors %>%
   
 
 data_for_priors %>% 
-  filter(CategoryType == "Abstract" | CategoryType == "Artifact" | CategoryType == "Natural") %>% 
+  filter(CategoryType == "Value" | CategoryType == "Artifact" | CategoryType == "Natural") %>% 
   select(CategoryType, predicted_answer, predicted_grp) %>% 
   pivot_wider(names_from = predicted_answer, values_from = predicted_grp)
 
@@ -108,107 +108,10 @@ senses_tidy = read.csv(here("data", "tidy", "senses_tidy.csv"))
 senses_tidy$CategoryType = as.factor(senses_tidy$CategoryType)
 senses_tidy$CategoryType = relevel(senses_tidy$CategoryType, ref = "Value")
 
-b2 <- brm(Selection ~ CategoryType + (CategoryType | Participant), 
+b2 <- brm(Selection ~ CategoryType + (CategoryType | Participant) + (1 | Item), 
           prior = prior_check,
           data=senses_tidy,
           family="categorical",
           file = here("data", "models", "exp2_model.rds"))
 
-
-
-
-
-
-### Pairwise comparisons 
-answer1 = c("Is", "Is not", "Both")
-category1 = c("Value", "Artifact", "Natural")
-
-df_source = crossing(answer1,category1) %>% 
-  mutate(cat_c = paste0(answer1,"_",category1))
-
-
-comp_list = list()  
-
-for (i in 1:9) {
-  this_df = df_source %>% 
-    mutate(answer2 = df_source$answer1[i]) %>% 
-    mutate(category2 = df_source$category1[i])
-  comp_list[[i]] = this_df
-}
-
-combos = do.call(rbind, comp_list)
-
-
-comp_list = list()  
-
-for (i in 1:9) {
-  this_df = df_source %>% 
-    mutate(answer2 = df_source$answer1[i]) %>% 
-    mutate(category2 = df_source$category1[i])
-  comp_list[[i]] = this_df
-}
-
-combos = do.call(rbind, comp_list)
-
-exp2_mod = b2
-
-rope_for_data = .2
-
-list_pdf = list()
-for (it in 1:81) {
-  pdf = create_pairwise_df(combos$answer1[it], combos$category1[it],
-                           combos$answer2[it], combos$category2[it], rope = rope_for_data) %>% 
-    mutate(combo1 = paste0(combos$answer1[it], "_", combos$category1[it])) %>% 
-    mutate(combo2 = paste0(combos$answer2[it], "_", combos$category2[it]))
-  list_pdf[[it]] = pdf
-}
-
-all_data = do.call(rbind,list_pdf)
-
-
-all_data %>% group_by(combo1, combo2) %>% 
-  summarize(Effect = mean(effect), 
-            Pct_rope = sum(in_rope)/4000) %>% 
-  write.csv(here("data", "tidy", "pairwise_table.csv"))
-
-rope = rope_for_data
-
-all_data %>% 
-  ggplot(aes(y = comp, x = effect, fill = after_stat(abs(x) < rope))) +
-  stat_halfeye() + geom_vline(xintercept = rope*-1, linetype = "dashed") +
-  geom_vline(xintercept = rope, linetype = "dashed") + theme_minimal() + 
-  ylab("") + theme(axis.text.y=element_blank(),axis.ticks=element_blank(),
-                   axis.title.y=element_blank(),legend.position="none") +
-  facet_grid(~combo1~combo2)
-
-ggsave("big_pairwise_plot.png", path = here("report", "exp2", "figs"))
-
-
-## Collapsed plots 
-all_data %>% 
-  filter(combo1 == "Both_Artifact") %>% 
-  ggplot(aes(y = combo2, x = effect, color = combo2)) +
-  stat_pointinterval(alpha = .5, position = position_dodge(width = .5)) + geom_vline(xintercept = rope*-1, linetype = "dashed") +
-  geom_vline(xintercept = rope, linetype = "dashed") + theme_minimal() + 
-  ylab("") + theme(axis.ticks=element_blank(),
-                   axis.title.y=element_blank(), legend.position ="none") +
-  ggtitle("Effects relative to answers of both in the artifact condition") +
-  scale_color_manual(values=c("#56B4E9", "#56B4E9", "#56B4E9",
-                              "#E69F00", "#E69F00", "#E69F00",
-                              "#999999", "#999999", "#999999"))
-
-
-ggsave("ba_coll.png", path = here("report", "exp2", "figs"))
-
-
-
-posterior_pred = conditional_effects(exp2_mod, categorical = TRUE)[["CategoryType:cats__"]] %>% 
-  select(effect1__, effect2__, estimate__, lower__, upper__) %>% 
-  mutate(estimate__ = round(estimate__, digits = 2)) %>% 
-  mutate(lower__ = round(lower__, digits = 2)) %>% 
-  mutate(upper__ = round(upper__, digits = 2)) %>% 
-  mutate(model_effect = paste0(estimate__, " [", lower__, " - ", upper__, "]")) %>% 
-  rename("CategoryType" = "effect1__") %>% 
-  select(CategoryType, effect2__, model_effect) %>% 
-  pivot_wider(names_from = effect2__, values_from = model_effect)
 

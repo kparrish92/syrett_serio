@@ -30,7 +30,7 @@ The ranges were chosen from setting a semi-conservative standard deviation in lo
 
 ```{r}
 data_for_priors %>%
-  filter(CategoryType == "Abstract" | CategoryType == "Artifact" | CategoryType == "Natural") %>% 
+  filter(CategoryType == "Value" | CategoryType == "Artifact" | CategoryType == "Natural") %>% 
   mutate(log_odds = qlogis(predicted_grp)) %>% 
   mutate(upper = log_odds + .5) %>% 
   mutate(lower = log_odds - .5) %>% 
@@ -45,9 +45,21 @@ data_for_priors %>%
   knitr::kable(format = "pandoc")
 ```
 
+
+```{r}
+data_for_priors %>%
+  filter(CategoryType == "Value" | CategoryType == "Artifact" | CategoryType == "Natural") %>% 
+  mutate(log_odds = qlogis(predicted_grp)) %>% 
+  mutate(upper = log_odds + .5) %>% 
+  mutate(lower = log_odds - .5) %>% 
+  mutate(upper_p = plogis(upper)) %>% 
+  mutate(lower_p = plogis(lower)) %>% 
+  ggplot(aes(x = CategoryType, y = predicted_grp, ymin = lower_p, ymax = upper_p, color = predicted_answer)) + geom_point(position = position_dodge(width = .3), size = 4) + geom_errorbar(position = position_dodge(width = .3)) + ylab("Prior Probability")
+```
+
 ### The results of the model
 
-Model structure: `brm(Selection ~ CategoryType + (CategoryType | Participant)` 
+Model structure: `brm(Selection ~ CategoryType + (CategoryType | Participant) + (1 | Item)` 
 
 `Selection` had three levels: "Both","Is not", and "Is". The model predicted the log-odds of each choice as a function of `CategoryType`.
 
@@ -96,38 +108,45 @@ conditional_effects(exp2_mod, categorical = TRUE)[["CategoryType:cats__"]] %>%
   knitr::kable(format = "pandoc", digits = 2)
 ```
 
-# The pairwise comparisons 
+# The pairwise comparisons (updated in December)
 
-The pairwise comparisons are also based on the model. For any given comparison, we extract the 4000 iterations from the model for each and subtract them. This gives us a plausible range of effect sizes. If the distribution of estimate is around 0, then this would be evidence for the lack of an effect (with a particular probability measured by the proportion that falls within the ROPE).
+The pairwise comparisons were done by extracting the fitted draws from the Bayesian model described above and making the relevant subtractions. First, we zoom in on the differences within each answer choice between conditions (comparing the red points on the top plot). In other words, this tells us, although "both" was the most probable response for Value, Artifact and Natural kind conditions, was there evidence of a meaningful difference in the three possible comparisons?  
 
-
-Here is just one example:
-
-```{r}
-create_pairwise_plot("Is", "Value",
-                     "Both", "Value", rope = .2)
-```
-
-We have a lot of possible comparisons: 81 in principle, but it's more like 36 that we really care about. Here is a very busy visualization of what I mean:
-
-**Old plot**
-```{r}
-knitr::include_graphics(here("report", "exp2", "figs", "big_pairwise_plot.png"))
-```
-
-**Collapsed plots**
-```{r}
-knitr::include_graphics(here("report", "exp2", "figs", "ba_coll.png"))
-```
-
-
-We can decide together which specific differences are important to visualize. Here is a full table of the comparisons. Note that we can change the ROPE as it seems appropriate. 
+## Both-both across categories 
 
 ```{r}
-read.csv(here("data", "tidy", "pairwise_table.csv")) %>% 
-   knitr::kable(format = "pandoc", digits = 2)
+knitr::include_graphics(here("report", "exp2", "figs", "both_cond_plots.png"))
 ```
 
+# Is-is across categories 
+
+```{r}
+knitr::include_graphics(here("report", "exp2", "figs", "is_cond_plots.png"))
+```
+
+# Is not - is not across categories 
+
+```{r}
+knitr::include_graphics(here("report", "exp2", "figs", "isnot_cond_plots.png"))
+```
+
+# Both, is, is not within natural kinds 
+
+```{r}
+knitr::include_graphics(here("report", "exp2", "figs", "within_nk.png"))
+```
+
+# Both, is, is not within artifacts 
+
+```{r}
+knitr::include_graphics(here("report", "exp2", "figs", "within_art.png"))
+```
+
+# Both, is, is not within value
+
+```{r}
+knitr::include_graphics(here("report", "exp2", "figs", "within_value.png"))
+```
 
 # Sensitivity analysis 
 

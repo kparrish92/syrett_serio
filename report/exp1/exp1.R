@@ -16,12 +16,10 @@ member_tidy = read.csv(here("data", "tidy", "member_tidy.csv")) %>%
 
 
 ## Tidy data 
-ord_data = rbind(member_tidy, nonmember_tidy) %>% 
-  filter(CategoryType == "Abstract"| CategoryType == "Artifact" | CategoryType ==  "Natural")
-
+ord_data = rbind(member_tidy, nonmember_tidy) 
 ## Run member model
 ord_mod_member <- brm(as.integer(Rating) ~ CategoryType + 
-                 (CategoryType | Participant),
+                 (CategoryType | Participant) + (1 | Item),
                data = ord_data %>% filter(membership == "member"),
                family = cumulative(),
                cores = 4)
@@ -30,7 +28,7 @@ ord_mod_member %>% write_rds(here("data", "models","ord_member.rds"))
 
 ## Run nonmember model
 ord_mod_nonmember <- brm(as.integer(Rating) ~ CategoryType + 
-                        (CategoryType | Participant),
+                        (CategoryType | Participant) + (1 | Item),
                       data = ord_data %>% filter(membership == "nonmember"),
                       family = cumulative(),
                       cores = 4)
