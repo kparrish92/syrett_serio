@@ -92,3 +92,28 @@ create_pairwise_table = function(comb1, comb2, comb3)
 }
 
 
+
+create_pairwise_df_exp3 = function(answer1, category1, answer2, category2, rope)
+{
+  
+  big_df_3 = exp3_tidy %>% 
+    data_grid(CategoryType) %>%
+    add_fitted_draws(b3, dpar = TRUE, category = "Selection",
+                     re_formula = NA) %>% 
+    mutate(log_odds = qlogis(.value))
+  
+  # is not artifact vs both natural kinds 
+  
+  comp_df_1 = big_df_3 %>% 
+    filter(CategoryType == category1 & Selection == answer1)
+  
+  comp_df_2 = big_df_3 %>% 
+    filter(CategoryType == category2 & Selection == answer2)
+  
+  effect = comp_df_2$log_odds - comp_df_1$log_odds 
+  
+  df = data.frame(effect, comp = "Nk_both-art_isnot") %>% 
+    mutate(in_rope = ifelse(abs(effect) < rope, 1,0))
+  
+  return(df)
+}

@@ -13,17 +13,19 @@ library(bayestestR)
 library(brms)
 
 four_choice_mod = read_rds(here("data", "models", "exp3_model.rds"))
+
+four_choice_mod_s = read_rds(here("data", "models", "exp3_model_s.rds"))
 ```
 
 ### The results of the model
 
-Model structure: `brm(Selection ~ CategoryType + (CategoryType | Participant)` 
+Model structure: `brm(Selection ~ CategoryType + (CategoryType | Participant) + (1 | item)` 
 
 `Selection` had four levels: "Elaine right","Akira right", "Both", and "Neither". The model predicted the log-odds of each choice as a function of `CategoryType`.
 
 `CategoryType` had three levels: "Natural", "Abstract" (Value) and "Artifact".
 
-`Participant`: There were X participants, each with X data points total (6 per `CategoryType`). the model included a random slope of category type per participant. This both takes into account the nested structure of the data and allows for the estimation of individual probabilities per `CategoryType`. 
+`Participant`: There were 50 participants, each with 18 data points total (6 per `CategoryType`). the model included a random slope of category type per participant. This both takes into account the nested structure of the data and allows for the estimation of individual probabilities per `CategoryType`. 
 
 This is another simple model that will serve as the model we use for the sensitivity analysis - we should dicuss priors. We can use the data from experiment 2, potentially. 
 
@@ -49,6 +51,71 @@ conditional_effects(four_choice_mod, categorical = TRUE)
 
 ```{r}
 conditional_effects(four_choice_mod, categorical = TRUE)[["CategoryType:cats__"]] %>% 
+  select(effect1__, effect2__, estimate__, lower__, upper__) %>% 
+  mutate(estimate__ = round(estimate__, digits = 2)) %>% 
+  mutate(lower__ = round(lower__, digits = 2)) %>% 
+  mutate(upper__ = round(upper__, digits = 2)) %>% 
+  mutate(model_effect = paste0(estimate__, " [", lower__, " - ", upper__, "]")) %>% 
+  rename("CategoryType" = "effect1__") %>% 
+  select(CategoryType, effect2__, model_effect) %>% 
+  pivot_wider(names_from = effect2__, values_from = model_effect) %>% 
+  knitr::kable(format = "pandoc", digits = 2)
+```
+
+## Pairwise comparisons 
+
+# Elaine is right between answer choices
+
+```{r}
+knitr::include_graphics(here("report", "exp3", "figs", "elaine_pairw.png"))
+```
+
+```{r}
+read.csv(here("data", "tidy", "exp3_posthoc_table_elaine.csv")) %>% 
+  select(-X) %>% 
+  knitr::kable(format = "pandoc")
+```
+
+# Akira is right between answer choices
+
+```{r}
+knitr::include_graphics(here("report", "exp3", "figs", "akira_pairw.png"))
+```
+
+```{r}
+read.csv(here("data", "tidy", "exp3_posthoc_table_akira.csv")) %>% 
+  select(-X) %>% 
+  knitr::kable(format = "pandoc")
+```
+
+# Both are right is right between answer choices
+
+```{r}
+knitr::include_graphics(here("report", "exp3", "figs", "both_pairw.png"))
+```
+
+```{r}
+read.csv(here("data", "tidy", "exp3_posthoc_table_both.csv")) %>% 
+  select(-X) %>% 
+  knitr::kable(format = "pandoc")
+```
+
+## Sensitivity Analysis 
+
+```{r}
+describe_posterior(four_choice_mod_s) %>% 
+  as_tibble() %>% 
+  select(-c("CI", "ROPE_CI", "ROPE_low", "ROPE_high")) %>% 
+  mutate(ESS = round(ESS)) %>% 
+  knitr::kable(format = "pandoc", digits = 2)
+```
+
+```{r}
+conditional_effects(four_choice_mod_s, categorical = TRUE)
+```
+
+```{r}
+conditional_effects(four_choice_mod_s, categorical = TRUE)[["CategoryType:cats__"]] %>% 
   select(effect1__, effect2__, estimate__, lower__, upper__) %>% 
   mutate(estimate__ = round(estimate__, digits = 2)) %>% 
   mutate(lower__ = round(lower__, digits = 2)) %>% 
