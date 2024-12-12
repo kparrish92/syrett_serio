@@ -69,3 +69,26 @@ create_pairwise_df = function(answer1, category1, answer2, category2, rope)
   return(df)
 }
 
+create_pairwise_table = function(comb1, comb2, comb3)
+  
+{
+  table = all_data %>% 
+    mutate(Comparison = paste0(combo1,"_", combo2)) %>% 
+    filter(Comparison == comb1 | Comparison == comb2 |
+             Comparison == comb3) %>% 
+    group_by(Comparison) %>% 
+    summarize(HDI = hdi(effect), mean_eff = mean(effect), 
+              Percentage_in_rope = sum(in_rope)/4000) %>% 
+    mutate(Compelling_difference = ifelse(Percentage_in_rope < .05, "Yes", "No")) %>% 
+    mutate(Effect = paste0(round(mean_eff, digits = 2), 
+                           " [",
+                           round(HDI[,1], digits = 2),
+                           " - ",
+                           round(HDI[,2], digits = 2),
+                           "]")) %>% 
+    select(Comparison, Effect, Compelling_difference) %>% 
+    arrange(desc(Comparison))
+  return(table)
+}
+
+

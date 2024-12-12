@@ -62,12 +62,10 @@ all_data %>%
                             "Both_Artifact_Both_Value"="Artifact - Value", 
                             "Both_Natural_Both_Value"="Natural Kind - Value"))
 
-all_data %>% 
-  mutate(comps = paste0(combo1,"_", combo2)) %>% 
-  filter(comps == "Both_Artifact_Both_Natural" | comps == "Both_Artifact_Both_Value" |
-           comps == "Both_Natural_Both_Value") %>% 
-  group_by(comps) %>% 
-  summarize(HDI = hdi(effect), mean_eff = mean(effect))
+create_pairwise_table("Both_Artifact_Both_Natural", "Both_Artifact_Both_Value", "Both_Natural_Both_Value") %>% 
+  write.csv(here("data", "tidy", "exp2_posthoc_table_both.csv"))
+  
+
 
 ggsave("both_cond_plots.png", path = here("report", "exp2", "figs"))
 
@@ -88,6 +86,9 @@ all_data %>%
   scale_y_discrete(labels=c("Is_Artifact_Is_Natural"="Artifact - Natural Kind",
                             "Is_Artifact_Is_Value"="Artifact - Value", 
                             "Is_Natural_Is_Value"="Natural Kind - Value"))
+
+create_pairwise_table("Is_Artifact_Is_Natural", "Is_Artifact_Is_Value", "Is_Natural_Is_Value") %>% 
+  write.csv(here("data", "tidy", "exp2_posthoc_table_is.csv"))
 
 ggsave("is_cond_plots.png", path = here("report", "exp2", "figs"))
 
@@ -113,6 +114,9 @@ all_data %>%
                             "Is not_Artifact_Is not_Value"="Artifact - Value", 
                             "Is not_Natural_Is not_Value"="Natural Kind - Value"))
 
+create_pairwise_table("Is not_Artifact_Is not_Natural", "Is not_Artifact_Is not_Value", 
+                      "Is not_Natural_Is not_Value") %>% 
+  write.csv(here("data", "tidy", "exp2_posthoc_table_isnot.csv"))
 
 ggsave("isnot_cond_plots.png", path = here("report", "exp2", "figs"))
 
@@ -132,6 +136,25 @@ all_data %>%
   scale_y_discrete(labels=c("Is_Natural_Both_Natural"="Is - Both",
                             "Is_Natural_Is not_Natural"="Is - Is not", 
                             "Both_Natural_Is not_Natural"="Both - Is not"))
+
+
+all_data %>% 
+  mutate(Comparison = paste0(combo1,"_", combo2)) %>% 
+  filter(Comparison == "Is_Natural_Both_Natural" | Comparison == "Is_Natural_Is not_Natural" |
+           Comparison == "Both_Natural_Is not_Natural") %>% 
+  group_by(Comparison) %>% 
+  summarize(HDI = hdi(effect), mean_eff = mean(effect), 
+            Percentage_in_rope = sum(in_rope)/4000) %>% 
+  mutate(Compelling_difference = ifelse(Percentage_in_rope < .05, "Yes", "No")) %>% 
+  mutate(Effect = paste0(round(mean_eff, digits = 2), 
+                         " [",
+                         round(HDI[,1], digits = 2),
+                         " - ",
+                         round(HDI[,2], digits = 2),
+                         "]")) %>% 
+  select(Comparison, Effect, Compelling_difference) %>% 
+  arrange(desc(Comparison)) %>% 
+  write.csv(here("data", "tidy", "exp2_posthoc_table_natural.csv"))
 
 ggsave("within_nk.png", path = here("report", "exp2", "figs"))
 
@@ -153,6 +176,12 @@ all_data %>%
                             "Is_Artifact_Is not_Artifact"="Is - Is not", 
                             "Both_Artifact_Is not_Artifact"="Both - Is not"))
 
+
+create_pairwise_table("Is_Artifact_Both_Artifact", "Is_Artifact_Is not_Artifact", 
+                      "Both_Artifact_Is not_Artifact") %>% 
+  write.csv(here("data", "tidy", "exp2_posthoc_table_artifact.csv"))
+
+
 ggsave("within_art.png", path = here("report", "exp2", "figs"))
 
 
@@ -170,6 +199,10 @@ all_data %>%
   scale_y_discrete(labels=c("Is_Value_Both_Value"="Is - Both",
                             "Is_Value_Is not_Value"="Is - Is not", 
                             "Both_Value_Is not_Value"="Both - Is not"))
+
+create_pairwise_table("Is_Value_Both_Value", "Is_Value_Is not_Value", 
+                      "Both_Value_Is not_Value") %>% 
+  write.csv(here("data", "tidy", "exp2_posthoc_table_value.csv"))
 
 ggsave("within_value.png", path = here("report", "exp2", "figs"))
 

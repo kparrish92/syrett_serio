@@ -14,6 +14,8 @@ library(brms)
 source(here::here("report", "exp2", "pairwise_comp_function.R"))
 # load model
 exp2_mod = read_rds(here("data", "models", "exp2_model.rds"))
+exp2_mod_s = read_rds(here("data", "models", "exp2_model_s.rds"))
+
 senses_tidy = read.csv(here("data", "tidy", "senses_tidy.csv")) 
 data_for_priors = read.csv(here("data", "tidy", "prior_data.csv"))
 ```
@@ -30,7 +32,7 @@ The ranges were chosen from setting a semi-conservative standard deviation in lo
 
 ```{r}
 data_for_priors %>%
-  filter(CategoryType == "Value" | CategoryType == "Artifact" | CategoryType == "Natural") %>% 
+  filter(CategoryType == "Value" | CategoryType == "Artifact" | CategoryType == "Natural") %>%
   mutate(log_odds = qlogis(predicted_grp)) %>% 
   mutate(upper = log_odds + .5) %>% 
   mutate(lower = log_odds - .5) %>% 
@@ -118,10 +120,22 @@ The pairwise comparisons were done by extracting the fitted draws from the Bayes
 knitr::include_graphics(here("report", "exp2", "figs", "both_cond_plots.png"))
 ```
 
+```{r}
+read.csv(here("data", "tidy", "exp2_posthoc_table_both.csv")) %>% 
+  select(-X) %>% 
+  knitr::kable(format = "pandoc")
+```
+
 # Is-is across categories 
 
 ```{r}
 knitr::include_graphics(here("report", "exp2", "figs", "is_cond_plots.png"))
+```
+
+```{r}
+read.csv(here("data", "tidy", "exp2_posthoc_table_is.csv")) %>% 
+  select(-X) %>% 
+  knitr::kable(format = "pandoc")
 ```
 
 # Is not - is not across categories 
@@ -130,16 +144,35 @@ knitr::include_graphics(here("report", "exp2", "figs", "is_cond_plots.png"))
 knitr::include_graphics(here("report", "exp2", "figs", "isnot_cond_plots.png"))
 ```
 
+```{r}
+read.csv(here("data", "tidy", "exp2_posthoc_table_isnot.csv")) %>% 
+  select(-X) %>% 
+  knitr::kable(format = "pandoc")
+```
+
 # Both, is, is not within natural kinds 
 
 ```{r}
 knitr::include_graphics(here("report", "exp2", "figs", "within_nk.png"))
 ```
 
+```{r}
+read.csv(here("data", "tidy", "exp2_posthoc_table_natural.csv")) %>% 
+  select(-X) %>% 
+  knitr::kable(format = "pandoc")
+```
+
+
 # Both, is, is not within artifacts 
 
 ```{r}
 knitr::include_graphics(here("report", "exp2", "figs", "within_art.png"))
+```
+
+```{r}
+read.csv(here("data", "tidy", "exp2_posthoc_table_artifact.csv")) %>% 
+  select(-X) %>% 
+  knitr::kable(format = "pandoc")
 ```
 
 # Both, is, is not within value
@@ -148,6 +181,46 @@ knitr::include_graphics(here("report", "exp2", "figs", "within_art.png"))
 knitr::include_graphics(here("report", "exp2", "figs", "within_value.png"))
 ```
 
+```{r}
+read.csv(here("data", "tidy", "exp2_posthoc_table_value.csv")) %>% 
+  select(-X) %>% 
+  knitr::kable(format = "pandoc")
+```
+
 # Sensitivity analysis 
 
-This will come at a later time - initially, it does not seem that the default priors qualitatively change the results. 
+**Model summary with default priors**
+```{r}
+describe_posterior(exp2_mod_s) %>% 
+  as_tibble() %>% 
+  select(-c("CI", "ROPE_CI", "ROPE_low", "ROPE_high")) %>% 
+  mutate(Parameter = case_when(
+    Parameter == "b_muIs_Intercept" ~ "Intercept 'is'", 
+    Parameter == "b_muIsnot_Intercept" ~ "Intercept 'is not'", 
+    Parameter == "b_muIs_CategoryTypeArtifact" ~ "Is_CategoryTypeArtifact", 
+    Parameter == "b_muIs_CategoryTypeNatural" ~ "Is_CategoryTypeNatural", 
+    Parameter == "b_muIsnot_CategoryTypeArtifact" ~ "Isnot_CategoryTypeArtifact",
+    Parameter == "b_muIsnot_CategoryTypeNatural" ~ "Isnot_CategoryTypeNatural"
+  )) %>% 
+  mutate(ESS = round(ESS)) %>% 
+  knitr::kable(format = "pandoc", digits = 2)
+```
+
+**Conditional Effects plot with default priors**
+```{r}
+conditional_effects(exp2_mod_s, categorical = TRUE)
+```
+
+**Conditional Effects table with default priors**
+```{r}
+conditional_effects(exp2_mod_s, categorical = TRUE)[["CategoryType:cats__"]] %>% 
+  select(effect1__, effect2__, estimate__, lower__, upper__) %>% 
+  mutate(estimate__ = round(estimate__, digits = 2)) %>% 
+  mutate(lower__ = round(lower__, digits = 2)) %>% 
+  mutate(upper__ = round(upper__, digits = 2)) %>% 
+  mutate(model_effect = paste0(estimate__, " [", lower__, " - ", upper__, "]")) %>% 
+  rename("CategoryType" = "effect1__") %>% 
+  select(CategoryType, effect2__, model_effect) %>% 
+  pivot_wider(names_from = effect2__, values_from = model_effect) %>% 
+  knitr::kable(format = "pandoc", digits = 2)
+```
