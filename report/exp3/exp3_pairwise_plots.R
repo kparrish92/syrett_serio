@@ -86,9 +86,59 @@ ggsave("both_pairw.png", path = here("report", "exp3", "figs"))
 
 ## Within Value
 
+
+
+crossing(a,b)
+
+exp3_pw %>% 
+  mutate(comps = paste0(combo1,"_", combo2)) %>% 
+  filter(comps == "Both_value_Elaine right_value" |
+           comps == "Both_value_Akira right_value" |
+           comps == "Elaine right_value_Akira right_value") %>% 
+  ggplot(aes(y = comps, x = effect)) +
+  stat_halfeye(fill = "bisque3", alpha = .5) + geom_vline(xintercept = rope*-1, linetype = "dashed") +
+  geom_vline(xintercept = rope, linetype = "dashed") + theme_minimal() + 
+  ylab("") + theme(axis.ticks=element_blank(),
+                   axis.title.y=element_blank(), legend.position = "none") +
+  xlab("Difference in Log-odds") +
+  xlim(-6,6) +
+  scale_y_discrete(labels=c("Both_value_Elaine right_value"="Both right - Elaine right", 
+                            "Both_value_Akira right_value"="Both right - Akira right",
+                            "Elaine right_value_Akira right_value"="Elaine right - Akira right"))
+
 ## Within natural kinds 
+
+exp3_pw %>% 
+  mutate(comps = paste0(combo1,"_", combo2)) %>% 
+  filter(comps == "Both_natural_kind_Elaine right_natural_kind" |
+           comps == "Both_natural_kind_Akira right_natural_kind" |
+           comps == "Elaine right_natural_kind_Akira right_natural_kind") %>% 
+  ggplot(aes(y = comps, x = effect)) +
+  stat_halfeye(fill = "deepskyblue3", alpha = .5) + geom_vline(xintercept = rope*-1, linetype = "dashed") +
+  geom_vline(xintercept = rope, linetype = "dashed") + theme_minimal() + 
+  ylab("") + theme(axis.ticks=element_blank(),
+                   axis.title.y=element_blank(), legend.position = "none") +
+  xlab("Difference in Log-odds") +
+  xlim(-6,6) +
+  scale_y_discrete(labels=c("Both_natural_kind_Elaine right_natural_kind"="Both right - Elaine right", 
+                            "Both_natural_kind_Akira right_natural_kind"="Both right - Akira right",
+                            "Elaine right_natural_kind_Akira right_natural_kind"="Elaine right - Akira right"))
 
 ## Within artifact 
 
+exp3_pw %>% 
+  mutate(comps = paste0(combo1,"_", combo2)) %>% 
+  filter(comps == "Both_artifact_Elaine right_artifact" |
+           comps == "Both_artifact_Akira right_artifact" |
+           comps == "Elaine right_artifact_Akira right_artifact") %>% 
+  ggplot(aes(y = comps, x = effect)) +
+  stat_halfeye(fill = "coral", alpha = .5) + geom_vline(xintercept = rope*-1, linetype = "dashed") +
+  geom_vline(xintercept = rope, linetype = "dashed") + theme_minimal() + 
+  ylab("") + theme(axis.ticks=element_blank(),
+                   axis.title.y=element_blank(), legend.position = "none") +
+  xlab("Difference in Log-odds") +
+  xlim(-6,6) +
+  scale_y_discrete(labels=c("Both_artifact_Elaine right_artifact"="Both right - Elaine right", 
+                            "Both_artifact_Akira right_artifact"="Both right - Akira right",
+                            "Elaine right_artifact_Akira right_artifact"="Elaine right - Akira right"))
 
-  

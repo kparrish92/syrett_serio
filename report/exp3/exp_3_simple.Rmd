@@ -17,7 +17,7 @@ four_choice_mod = read_rds(here("data", "models", "exp3_model.rds"))
 four_choice_mod_s = read_rds(here("data", "models", "exp3_model_s.rds"))
 ```
 
-### The results of the model
+# The results of the model
 
 Model structure: `brm(Selection ~ CategoryType + (CategoryType | Participant) + (1 | item)` 
 
@@ -62,9 +62,9 @@ conditional_effects(four_choice_mod, categorical = TRUE)[["CategoryType:cats__"]
   knitr::kable(format = "pandoc", digits = 2)
 ```
 
-## Pairwise comparisons 
+# Pairwise comparisons 
 
-# Elaine is right between answer choices
+## Elaine is right between answer choices
 
 ```{r}
 knitr::include_graphics(here("report", "exp3", "figs", "elaine_pairw.png"))
@@ -76,7 +76,7 @@ read.csv(here("data", "tidy", "exp3_posthoc_table_elaine.csv")) %>%
   knitr::kable(format = "pandoc")
 ```
 
-# Akira is right between answer choices
+## Akira is right between answer choices
 
 ```{r}
 knitr::include_graphics(here("report", "exp3", "figs", "akira_pairw.png"))
@@ -88,7 +88,7 @@ read.csv(here("data", "tidy", "exp3_posthoc_table_akira.csv")) %>%
   knitr::kable(format = "pandoc")
 ```
 
-# Both are right is right between answer choices
+## Both are right is right between answer choices
 
 ```{r}
 knitr::include_graphics(here("report", "exp3", "figs", "both_pairw.png"))
@@ -99,6 +99,45 @@ read.csv(here("data", "tidy", "exp3_posthoc_table_both.csv")) %>%
   select(-X) %>% 
   knitr::kable(format = "pandoc")
 ```
+
+## Within Natural Kinds 
+
+*For these, I left out the pairwise comps with neither, given it was always near 0*
+
+```{r}
+knitr::include_graphics(here("report", "exp3", "figs", "nk_pairw.png"))
+```
+
+```{r}
+read.csv(here("data", "tidy", "exp3_posthoc_table_nk.csv")) %>% 
+  select(-X) %>% 
+  knitr::kable(format = "pandoc")
+```
+
+## Within value 
+
+```{r}
+knitr::include_graphics(here("report", "exp3", "figs", "value_pairw.png"))
+```
+
+```{r}
+read.csv(here("data", "tidy", "exp3_posthoc_table_value.csv")) %>% 
+  select(-X) %>% 
+  knitr::kable(format = "pandoc")
+```
+
+## Within artifact 
+
+```{r}
+knitr::include_graphics(here("report", "exp3", "figs", "art_pairw.png"))
+```
+
+```{r}
+read.csv(here("data", "tidy", "exp3_posthoc_table_art.csv")) %>% 
+  select(-X) %>% 
+  knitr::kable(format = "pandoc")
+```
+
 
 ## Sensitivity Analysis 
 
